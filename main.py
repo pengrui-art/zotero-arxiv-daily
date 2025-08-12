@@ -74,7 +74,6 @@ def get_arxiv_paper(query:str, debug:bool=False) -> list[ArxivPaper]:
     return papers
 
 
-
 parser = argparse.ArgumentParser(description='Recommender system for academic papers')
 
 def add_argument(*args, **kwargs):
@@ -99,18 +98,33 @@ def add_argument(*args, **kwargs):
 
 
 if __name__ == '__main__':
-    
-    add_argument('--zotero_id', type=str, help='Zotero user ID')
-    add_argument('--zotero_key', type=str, help='Zotero API key')
+
+    add_argument("--zotero_id", type=str, help="Zotero user ID", default="15109042")
+    add_argument(
+        "--zotero_key",
+        type=str,
+        help="Zotero API key",
+        default="pSVS2OTHFv9dcq4TER8B7OKt",
+    )
     add_argument('--zotero_ignore',type=str,help='Zotero collection to ignore, using gitignore-style pattern.')
     add_argument('--send_empty', type=bool, help='If get no arxiv paper, send empty email',default=False)
     add_argument('--max_paper_num', type=int, help='Maximum number of papers to recommend',default=100)
-    add_argument('--arxiv_query', type=str, help='Arxiv search query')
-    add_argument('--smtp_server', type=str, help='SMTP server')
-    add_argument('--smtp_port', type=int, help='SMTP port')
-    add_argument('--sender', type=str, help='Sender email address')
-    add_argument('--receiver', type=str, help='Receiver email address')
-    add_argument('--sender_password', type=str, help='Sender email password')
+    add_argument(
+        "--arxiv_query",
+        type=str,
+        help="Arxiv search query",
+        default="cs.AI+cs.CV+cs.LG+cs.CL",
+    )
+    add_argument('--smtp_server', type=str, help='SMTP server',default='smtp.qq.com')
+    add_argument('--smtp_port', type=int, help='SMTP port',default=465)
+    add_argument('--sender', type=str, help='Sender email address', default='320715155@qq.com')
+    add_argument('--receiver', type=str, help='Receiver email address', default='320715155@qq.com')
+    add_argument(
+        "--sender_password",
+        type=str,
+        help="Sender email password",
+        default="nnumjtnnmkvmcbae",
+    )
     add_argument(
         "--use_llm_api",
         type=bool,
@@ -166,7 +180,7 @@ if __name__ == '__main__':
     if len(papers) == 0:
         logger.info("No new papers found. Yesterday maybe a holiday and no one submit their work :). If this is not the case, please check the ARXIV_QUERY.")
         if not args.send_empty:
-          exit(0)
+            exit(0)
     else:
         logger.info("Reranking papers...")
         papers = rerank_paper(papers, corpus)
@@ -183,4 +197,3 @@ if __name__ == '__main__':
     logger.info("Sending email...")
     send_email(args.sender, args.receiver, args.sender_password, args.smtp_server, args.smtp_port, html)
     logger.success("Email sent successfully! If you don't receive the email, please check the configuration and the junk box.")
-
